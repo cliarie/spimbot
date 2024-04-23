@@ -42,14 +42,14 @@ MMIO_STATUS             = 0xffff204c
 ### Puzzle
 board:     .space 512
 #### Puzzle
+puzzle_received: .byte 0
 
 # If you want, you can use the following to detect if a bonk has happened.
 has_bonked: .byte 0
 
 .text
 main:
-    sub $sp, $sp, 4
-    sw  $ra, 0($sp)
+
 
     # Construct interrupt mask
     li      $t4, 0
@@ -67,6 +67,98 @@ main:
     sw $t2, VELOCITY
         
     # YOUR CODE GOES HERE!!!!!!
+    sub $sp, $sp, 16
+    sw  $ra, 0($sp)
+    sw  $s0, 4($sp)                        # store i
+    sw  $s1, 8($sp)                        # store puzzle_received
+
+# PART 2 CODE (PUZZLE_PART)
+
+puzzle_part:
+    li      $s0, 0                         # i = 0
+
+for_puzzle:
+    bge     $s0, 3, end_for_puzzle         # for int i = 0; i < 2; i++
+    la      $t3, puzzle_received
+    sb      $0,  0($t3) 
+    #li      puzzle_received, 0             # puzzle_recieved = 0
+    la      $t0, board                     # storing address of board
+    sw      $t0, REQUEST_PUZZLE            # writing address of start of puzzle to REQUEST_PUZZLE MMIO
+
+while_puzzle:
+    bne     $t3, 0, end_while_puzzle
+    j while_puzzle
+
+end_while_puzzle:
+    la      $a0, board                    # load address of board 
+    
+    jal     quant_solve
+
+    la      $t0, board
+    sw      $t0, SUBMIT_SOLUTION
+
+    addi     $s0, $s0, 1
+    j       for_puzzle
+
+end_for_puzzle:
+
+
+# PART 1 CODE 
+j infiniteloop
+
+move_east:
+    sw      $zero, VELOCITY
+
+    li      $t0, 0                         # Angle Value
+    sw      $t0, ANGLE
+    li      $t1, 1
+    sw      $t1, ANGLE_CONTROL             # Absolute Angle
+
+    li      $t2, 1
+    sw      $t2, VELOCITY
+    jr      $ra
+
+shootcharged:
+    sw $0, CHARGE_SHOT
+    li $t0, 10000
+    doit:
+    beq $t0, $0, end
+    sub $t0, $t0, 1
+    j doit
+    end:
+    sw $0, SHOOT
+    jr $ra
+
+
+
+shoot0:
+    li  $t0, 0
+    sw  $t0, SHOOT
+    jr $ra
+
+shoot1:
+    li $t0, 1
+    sw  $t0, SHOOT
+    jr $ra
+
+shoot2:
+    li $t0, 2
+    sw $t0, SHOOT
+    jr $ra
+
+shoot3:
+    li $t0, 3
+    sw $t0, SHOOT
+    jr $ra
+
+infiniteloop:
+    jal shootcharged
+    jal shoot0
+    jal shoot1
+    jal shoot2
+    jal shoot3
+    jal move_east
+    j infiniteloop
     
 loop: # Once done, enter an infinite loop so that your bot can be graded by QtSpimbot once 10,000,000 cycles have elapsed
     j loop
@@ -106,7 +198,6 @@ interrupt_handler:
     bne     $a0, 0, non_intrpt
 
 
-
 interrupt_dispatch:                 # Interrupt:
     mfc0    $k0, $13                # Get Cause register, again
     beq     $k0, 0, done            # handled all outstanding interrupts
@@ -142,8 +233,12 @@ timer_interrupt:
     j        interrupt_dispatch     # see if other interrupts are waiting
 
 request_puzzle_interrupt:
-    sw      $0, REQUEST_PUZZLE_ACK
+    li      $t1, 1
+    sw      $t1, REQUEST_PUZZLE_ACK
     #Fill in your puzzle interrupt code here
+    li      $t0, 1
+    la      $t2, puzzle_received
+    sb      $t0, 0($t2)
     j       interrupt_dispatch
 
 respawn_interrupt:

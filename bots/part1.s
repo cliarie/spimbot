@@ -49,7 +49,7 @@ has_bonked: .byte 0
 
 .text
 main:
-    sub $sp, $sp, 4
+    sub $sp, $sp, 16
     sw  $ra, 0($sp)
 
     # Construct interrupt mask
@@ -67,9 +67,102 @@ main:
     li $t2, 0
     sw $t2, VELOCITY
         
-    # YOUR CODE GOES HERE!!!!!!
-    
+    j infiniteloop
+
+move_east:
+
+        sw      $zero, VELOCITY
+
+        li      $t0, 0                         # Angle Value
+        sw      $t0, ANGLE
+        li      $t1, 1
+        sw      $t1, ANGLE_CONTROL             # Absolute Angle
+
+        li      $t2, 1
+        sw      $t2, VELOCITY
+        jr      $ra
+
+move_south:
+
+        sw      $zero, VELOCITY
+
+        li      $t0, 90                         # Angle Value
+        sw      $t0, ANGLE
+        li      $t1, 1
+        sw      $t1, ANGLE_CONTROL             # Absolute Angle
+
+        li      $t2, 10
+        sw      $t2, VELOCITY
+        jr      $ra
+
+move_west:
+
+        sw      $zero, VELOCITY
+
+        li      $t0, 180                         # Angle Value
+        sw      $t0, ANGLE
+        li      $t1, 1
+        sw      $t1, ANGLE_CONTROL             # Absolute Angle
+
+        li      $t2, 10
+        sw      $t2, VELOCITY
+        jr      $ra
+
+move_north:
+
+        sw      $zero, VELOCITY
+
+        li      $t0, 270                         # Angle Value
+        sw      $t0, ANGLE
+        li      $t1, 1
+        sw      $t1, ANGLE_CONTROL             # Absolute Angle
+
+        li      $t2, 10
+        sw      $t2, VELOCITY
+        jr      $ra
+
+shootcharged:
+    sw $0, CHARGE_SHOT
+    li $t0, 10000
+    doit:
+    beq $t0, $0, end
+    sub $t0, $t0, 1
+    j doit
+    end:
+    sw $0, SHOOT
+    jr $ra
+
+shoot0:
+    li  $t0, 0
+    sw  $t0, SHOOT
+    jr $ra
+
+shoot1:
+    li $t0, 1
+    sw  $t0, SHOOT
+    jr $ra
+
+shoot2:
+    li $t0, 2
+    sw $t0, SHOOT
+    jr $ra
+
+shoot3:
+    li $t0, 3
+    sw $t0, SHOOT
+    jr $ra
+
+infiniteloop:
+    jal shootcharged
+    jal shoot0
+    jal shoot1
+    jal shoot2
+    jal shoot3
+    jal move_east
+    j infiniteloop
+
 loop: # Once done, enter an infinite loop so that your bot can be graded by QtSpimbot once 10,000,000 cycles have elapsed
+
     j loop
     
 

@@ -1,2 +1,5 @@
 strategy: ᕕ( ᐛ )ᕗ
+Our strategy was to optimize the best path and timing to shoot charged shots because the board is given. We also checked whether we were starting top left or top right corner and flipped our path based on that. We decided not to try and aim for the other bot because we thought flipping tiles was more efficient. 
+
 implementation: ಠ◡ಠ
+We implemented charged shots in all four directions as well as moving in all four directions given the certain amount of pixels needed to move. We implemented solving puzzles by having an interupt mask for requesting a puzzle (also know as puzzle checker). 

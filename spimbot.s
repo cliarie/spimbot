@@ -45,6 +45,7 @@ MMIO_STATUS             = 0xffff204c
 ### Puzzle
 board:     .space 512
 puzzlechecker: .byte 0
+respawnchecker: .byte 0
 #### Puzzle
 
 # If you want, you can use the following to detect if a bonk has happened.
@@ -60,6 +61,7 @@ main:
     or      $t4, $t4, TIMER_INT_MASK            # enable timer interrupt
     or      $t4, $t4, BONK_INT_MASK             # enable bonk interrupt
     or      $t4, $t4, REQUEST_PUZZLE_INT_MASK   # enable puzzle interrupt
+    or      $t4, $t4, RESPAWN_INT_MASK   # enable respawn interrupt
     or      $t4, $t4, 1 # global enable
     mtc0    $t4, $12
     
@@ -71,231 +73,529 @@ main:
     sw $t2, VELOCITY
         
     # TODO slay look here
-    lw $t0, BOT_X
-    ble $t0, 28, starting_on_left
-    j starting_on_right
+    restart:
+        lw $t0, BOT_X
+        ble $t0, 28, starting_on_left
+        j starting_on_right
 
     starting_on_left:
-        jal identifypuzzle
-        
-        jal identifypuzzle
-        jal charged_shote
+        jal identifypuzzle 
 
-        jal identifypuzzle
+        li $a0, 40
+        jal move_down
+
+
+        li $a0, 48
+        jal move_right
+
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 8
+        jal move_right
+
+        li $a0, 8
+        jal move_down
         
-        li $a0, 64
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 48
+        jal move_down
+        
+        jal charged_shote
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_left
+        
+        jal charged_shots
+        jal charged_shotw 
+
+        li $a0, 24
+        jal move_down
+        
+        jal charged_shots
+        jal charged_shotw 
+        
+        li $a0, 48
+        jal move_down
+        
+        li $a0, 24
+        jal move_right
+        
+        li $a0, 40
+        jal move_down
+        
+        li $a0, 16 
+        jal move_left
+        
+        jal charged_shots
+        jal charged_shotw 
+        jal charged_shote 
+
+        li $a0, 24
+        jal move_left
+
+        li $a0, 8
+        jal move_down
+        
+
+        jal charged_shots
+        jal charged_shotw   
+
+        li $a0, 16
+        jal move_left
+        
+        li $a0, 8
+        jal move_down
+        
+
+        jal charged_shots
+
+        li $a0, 16
+        jal move_up
+
+        li $a0, 80
+        jal move_right
+        
+
+        jal charged_shotn
+        jal identifypuzzle
+
+        li $a0, 32
+        jal move_right
+        
+        jal charged_shotn
+
+        li $a0, 80
+        jal move_up 
+        
+        li $a0, 16
+        jal move_right
+        
+
+        jal charged_shotn
+        
+        li $a0, 8
+        jal move_up
+
+        li $a0, 24
         jal move_right
         
         jal charged_shots
 
+        li $a0, 88
+        jal move_down
+        
+        jal charged_shote
+
+        li $a0, 48
+        jal move_right
+        
+        
+        jal charged_shots
+        jal charged_shote
+        jal charged_shotn
+        jal charged_shotw
+
+        li $a0, 8
+        jal move_down
+        
+        li $a0, 24
+        jal move_right
+        
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_right
+        
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 8
+        jal move_up
+        
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 48
+        jal move_left
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 40
+        jal move_up
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_right
         jal identifypuzzle
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 56
+        jal move_up
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_up
+        
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_left
+        jal identifypuzzle
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 40
+        jal move_up
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 56
+        jal move_left
+        
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw 
 
         li $a0, 48
         jal move_down
 
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
         jal charged_shotw
-
-        jal identifypuzzle
-
-        li $a0, 32
-        jal move_down
-        
-        jal charged_shotw
-
-        jal identifypuzzle
-
-        li $a0, 8
-        jal move_down
 
         li $a0, 32
         jal move_left
 
+        jal charged_shotn
+        jal charged_shote
         jal charged_shots
-
-        jal identifypuzzle
-
-        li $a0, 24
-        jal move_down
-
         jal charged_shotw
-        
-        jal identifypuzzle
 
         li $a0, 48
-        jal move_down
-
-        jal charged_shote
-
-        jal identifypuzzle
-
-        li $a0, 32
-        jal move_right
-
-        li $a0, 40
-        jal move_down
-
-        jal charged_shote
-
-        jal identifypuzzle
-
-        li $a0, 24
-        jal move_down
-
-        jal charged_shotw
-
-        jal identifypuzzle
-
-        li $a0, 24
-        jal move_down
-
-        jal charged_shotw
-
-        jal identifypuzzle
-
-        li $a0, 16
-        jal move_down
-
-        jal shootwest
-
-        li $a0, 56
         jal move_up
 
-        li $a0, 56
-        jal move_right
-
         jal charged_shotn
-
-        jal identifypuzzle
-
-        li $a0, 40
-        jal move_up
-
-        li $a0, 16
-        jal move_right        
-        jal charged_shotn
-        jal identifypuzzle
-
-        li $a0, 8
-        jal move_right
+        jal charged_shote
         jal charged_shots
-        jal identifypuzzle
+        jal charged_shotw
 
-        li $a0, 40
-        jal move_down   
-        
+        li $a0, 112
+        jal move_left
+        jal charged_shotn
         jal charged_shote
+        jal charged_shots
+        jal charged_shotw
 
+        li $a0, 56
+        jal move_up
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
 
+        j starting_on_left
 
 
     starting_on_right:
-        jal identifypuzzle
-        
-        jal identifypuzzle
+        jal identifypuzzle 
+
+        li $a0, 40
+        jal move_up
+
+
+        li $a0, 48
+        jal move_left
+
+        jal charged_shote
+        jal charged_shotn
         jal charged_shotw
 
-        jal identifypuzzle
+        li $a0, 8
+        jal move_left
+
+        li $a0, 8
+        jal move_up
         
-        li $a0, 64
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 48
+        jal move_up
+        
+        jal charged_shote
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_right
+        
+        jal charged_shotn
+        jal charged_shote
+
+        li $a0, 24
+        jal move_up
+        
+        jal charged_shotn
+        jal charged_shote 
+        
+        li $a0, 48
+        jal move_up
+        
+        li $a0, 24
+        jal move_left
+        
+        li $a0, 40
+        jal move_up
+        
+        li $a0, 16 
+        jal move_right
+        
+        jal charged_shotn
+        jal charged_shotw 
+        jal charged_shote 
+
+        li $a0, 24
+        jal move_right
+
+        li $a0, 8
+        jal move_up
+        
+
+        jal charged_shotn
+        jal charged_shote   
+
+        li $a0, 16
+        jal move_right
+        
+        li $a0, 8
+        jal move_up
+        
+
+        jal charged_shotn
+
+        li $a0, 16
+        jal move_down
+
+        li $a0, 80
+        jal move_left
+        
+
+        jal charged_shots
+        jal identifypuzzle
+
+        li $a0, 32
+        jal move_left
+        
+        jal charged_shots
+
+        li $a0, 80
+        jal move_down
+        
+        li $a0, 16
+        jal move_left
+        
+
+        jal charged_shots
+        
+        li $a0, 8
+        jal move_down
+
+        li $a0, 24
         jal move_left
         
         jal charged_shotn
+
+        li $a0, 88
+        jal move_up
+        
+        jal charged_shotw
+
+        li $a0, 48
+        jal move_left
+        
+        
+        jal charged_shots
+        jal charged_shote
+        jal charged_shotn
+        jal charged_shotw
+
+        li $a0, 8
+        jal move_up
+        
+        li $a0, 24
+        jal move_left
+        
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_left
+        
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 8
+        jal move_down
+        
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 48
+        jal move_right
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 40
+        jal move_down
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_left
         jal identifypuzzle
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 56
+        jal move_down
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_down
+        
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 24
+        jal move_right
+        jal identifypuzzle
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 40
+        jal move_down
+
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 56
+        jal move_right
+        
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw 
 
         li $a0, 48
         jal move_up
 
+        jal charged_shotn
         jal charged_shote
-
-        jal identifypuzzle
-
-        li $a0, 32
-        jal move_up
-        
-        jal charged_shote
-
-        jal identifypuzzle
-
-        li $a0, 8
-        jal move_up
+        jal charged_shots
+        jal charged_shotw
 
         li $a0, 32
         jal move_right
 
         jal charged_shotn
-
-        jal identifypuzzle
-
-        li $a0, 24
-        jal move_up
-
         jal charged_shote
-        
-        jal identifypuzzle
+        jal charged_shots
+        jal charged_shotw
 
         li $a0, 48
-        jal move_up
-
-        jal charged_shotw
-
-        jal identifypuzzle
-
-        li $a0, 32
-        jal move_left
-
-        li $a0, 40
-        jal move_up
-
-        jal charged_shotw
-
-        jal identifypuzzle
-
-        li $a0, 24
-        jal move_up
-
-        jal charged_shote
-
-        jal identifypuzzle
-
-        li $a0, 24
-        jal move_up
-
-        jal charged_shote
-
-        jal identifypuzzle
-
-        li $a0, 16
-        jal move_up
-
-        jal charged_shote
-
-        li $a0, 56
         jal move_down
 
-        li $a0, 56
-        jal move_left
-
-        jal charged_shots
-
-        jal identifypuzzle
-
-        li $a0, 40
-        jal move_down
-
-        li $a0, 16
-        jal move_left       
-        jal charged_shots
-        jal identifypuzzle
-
-        li $a0, 8
-        jal move_left
         jal charged_shotn
-        jal identifypuzzle
-
-        li $a0, 40
-        jal move_up
-        
+        jal charged_shote
+        jal charged_shots
         jal charged_shotw
+
+        li $a0, 112
+        jal move_right
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        li $a0, 56
+        jal move_down
+        jal charged_shotn
+        jal charged_shote
+        jal charged_shots
+        jal charged_shotw
+
+        j starting_on_right
 
     identifypuzzle:
         sub $sp, $sp, 8
@@ -319,15 +619,14 @@ main:
         lw $s1, 4($sp)
         add $sp, $sp, 8
         jr $ra
-    
 
     shooteast:
-        li $t0, 0
+        li $t0, 1 
         sw $t0, SHOOT
         jr $ra
 
     shootnorth:
-        li $t0, 1
+        li $t0, 0
         sw $t0, SHOOT
         jr $ra
 
@@ -545,7 +844,9 @@ request_puzzle_interrupt:
     j       interrupt_dispatch
 
 respawn_interrupt:
+    li $t0, 1
     sw      $0, RESPAWN_ACK
+    sb $t0, respawnchecker
     #Fill in your respawn handler code here
     j       interrupt_dispatch
 
